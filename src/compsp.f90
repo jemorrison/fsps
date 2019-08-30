@@ -6,7 +6,7 @@ SUBROUTINE COMPSP(write_compsp, nzin, outfile,&
   !N.B. variables not otherwise defined come from sps_vars.f90
   use sps_vars
   use sps_utils, only: write_isochrone, add_nebular, setup_tabular_sfh, &
-                       csp_gen, sfhinfo, linterp, agn_dust, &
+                       csp_gen, sfhinfo, linterp, agn_dust, agn_inclination, &
                        smoothspec, igm_absorb, getindx, getmags
                        
   implicit none
@@ -31,6 +31,7 @@ SUBROUTINE COMPSP(write_compsp, nzin, outfile,&
   INTEGER :: i, nage
 
   ! ------ Various checks and setup ------
+
 
   IF (check_sps_setup.EQ.0) THEN
      WRITE(*,*) 'COMPSP ERROR: '//&
@@ -143,8 +144,17 @@ SUBROUTINE COMPSP(write_compsp, nzin, outfile,&
                               pset%igm_factor)
      endif
      !add AGN dust
+
+
      IF (add_agn_dust.EQ.1.AND.pset%fagn.GT.tiny_number) THEN
+        WRITE(6,*)'compsp.f90 add agu dust, fagn', add_agn_dust, pset%agn_tau,pset%fagn
         spec_csp = agn_dust(spec_lambda, spec_csp, pset, lbol_csp)
+     ENDIF
+
+
+     IF (add_agn_incl.EQ.1.AND.pset%fagni.GT.tiny_number) THEN
+        WRITE(6,*)'compsp.f90: add agu dust inclination, fagni', add_agn_incl,pset%agn_incl, pset%fagni
+        spec_csp = agn_inclination(spec_lambda, spec_csp, pset, lbol_csp)
      ENDIF
      ! Compute spectral indices
      if (write_compsp.EQ.4) then

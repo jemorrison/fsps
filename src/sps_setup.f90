@@ -46,6 +46,8 @@ SUBROUTINE SPS_SETUP(zin)
   REAL(SP), DIMENSION(nspec_aringer,n_agb_car) :: aringer_specinit=0.
   REAL(SP), DIMENSION(nagndust_spec)           :: agndust_lam=0.
   REAL(SP), DIMENSION(nagndust_spec,nagndust)  :: agndust_specinit=0.
+  REAL(SP), DIMENSION(nagnincl_spec)           :: agnincl_lam=0.
+  REAL(SP), DIMENSION(nagnincl_spec,nagnincl)  :: agnincl_specinit=0.
   REAL(KIND(1.0)), DIMENSION(nspec,nzinit,ndim_logt,ndim_logg) :: speclibinit=0.
   REAL(SP), DIMENSION(nspec,nzwmb,ndim_wmb_logt,ndim_wmb_logg) :: wmbsi=0.
   REAL(SP), DIMENSION(nzwmb)     :: zwmb=0.
@@ -56,6 +58,7 @@ SUBROUTINE SPS_SETUP(zin)
   !---------------------------------------------------------------!
   !---------------------------------------------------------------!
 
+  WRITE(6,*) '    Setting up SPS...'
   IF (verbose.EQ.1) THEN 
      WRITE(*,*) 
      WRITE(*,*) '    Setting up SPS...'
@@ -850,6 +853,7 @@ SUBROUTINE SPS_SETUP(zin)
 
   OPEN(99,FILE=TRIM(SPS_HOME)//'/dust/Nenkova08_y010_torusg_n10_q2.0.dat',&
        STATUS='OLD',iostat=stat,ACTION='READ')
+  WRITE(6,*) 'Read in Nenkova08 data'
   IF (stat.NE.0) THEN 
      WRITE(*,*) 'SPS_SETUP ERROR: error opening AGN dust models'
      STOP
@@ -872,6 +876,46 @@ SUBROUTINE SPS_SETUP(zin)
   DO i=1,nagndust
      agndust_spec(i1:i2,i) = 10**linterparr(LOG10(agndust_lam),&
           LOG10(agndust_specinit(:,i)+tiny30),LOG10(spec_lambda(i1:i2)))-tiny30
+
+  ENDDO
+
+
+  !----------------------------------------------------------------!
+  !------------Set up AGN inclination dust model-------------------!
+  !----------------------------------------------------------------!
+
+  !models from Jianwei Lyi
+
+  OPEN(99,FILE=TRIM(SPS_HOME)//'/dust/agn_dust_model_v1_normalized.dat',&
+       STATUS='OLD',iostat=stat,ACTION='READ')
+  WRITE(6,*) 'Jianwei Lyu AGN inclination library'
+  IF (stat.NE.0) THEN 
+     WRITE(*,*) 'SPS_SETUP ERROR: error opening AGN dust models'
+     STOP
+  ENDIF
+
+  !burn the header
+  DO i=1,4
+     READ(99,*)
+  ENDDO
+
+  !read in the inclination values
+  READ(99,*) agnincl_values
+
+  DO i=1,nagnincl_spec
+     READ(99,*) agnincl_lam(i),agnincl_specinit(i,:)
+  ENDDO
+
+
+  i1 = locate(spec_lambda,agnincl_lam(1))
+  i2 = locate(spec_lambda,agnincl_lam(nagnincl_spec))
+ 
+!  WRITE(6,*) 'locating agnlam',agnincl_lam(1),agnincl_lam(nagnincl_spec),i1,i2
+  DO i=1,nagnincl
+     agnincl_spec(i1:i2,i) = 10**linterparr(LOG10(agnincl_lam),&
+          LOG10(agnincl_specinit(:,i)+tiny30),LOG10(spec_lambda(i1:i2)))-tiny30
+
+!     write(6,*)i1,i2,agnincl_spec(i1:i2,i)
   ENDDO
 
 

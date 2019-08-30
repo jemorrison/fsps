@@ -64,6 +64,16 @@ MODULE SPS_UTILS
   END INTERFACE
 
   INTERFACE
+     FUNCTION AGN_INCLINATION(lam,spec,pset,lbol_csp)
+       USE sps_vars
+       REAL(SP), DIMENSION(nspec), INTENT(in) :: lam,spec
+       REAL(SP), INTENT(in) :: lbol_csp
+       TYPE(PARAMS), INTENT(in) :: pset
+       REAL(SP), DIMENSION(nspec) :: agn_inclination
+     END FUNCTION AGN_INCLINATION
+  END INTERFACE
+
+  INTERFACE
      FUNCTION AIRTOVAC(lam)
        USE sps_vars
        REAL(SP), DIMENSION(:), INTENT(in) :: lam

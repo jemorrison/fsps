@@ -6,12 +6,13 @@ FUNCTION AGN_DUST(lam,spec,pset,lbol_csp)
   REAL(SP), DIMENSION(nspec), INTENT(in) :: lam,spec
   REAL(SP), INTENT(in)       :: lbol_csp
   TYPE(PARAMS), INTENT(in)   :: pset
-  REAL(SP), DIMENSION(nspec) :: agn_dust,agnspeci
+  REAL(SP), DIMENSION(nspec) :: agn_dust,agnspeci,diff
   INTEGER  :: jlo
   REAL(SP) :: dj
  
   !--------------------------------------------------------------!
 
+  !WRITE(6,*) 'Calling agn_dust, agn_tau',pset%agn_tau
   !interpolate in tau_agn
   jlo = MIN(MAX(locate(agndust_tau,pset%agn_tau),1),&
        nagndust-1)
@@ -23,9 +24,7 @@ FUNCTION AGN_DUST(lam,spec,pset,lbol_csp)
 
   !attenuate the AGN emission by the diffuse dust
   agnspeci = agnspeci*EXP(-attn_curve(spec_lambda,dust_type,pset))
-
   agn_dust = spec + 10**lbol_csp*pset%fagn*agnspeci
-
 
 END FUNCTION AGN_DUST
   
