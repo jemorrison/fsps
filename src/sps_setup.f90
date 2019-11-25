@@ -48,6 +48,7 @@ SUBROUTINE SPS_SETUP(zin)
   REAL(SP), DIMENSION(nagndust_spec,nagndust)  :: agndust_specinit=0.
   REAL(SP), DIMENSION(nagnincl_spec)           :: agnincl_lam=0.
   REAL(SP), DIMENSION(nagnincl_spec,nagnincl)  :: agnincl_specinit=0.
+  REAL(SP), DIMENSION(nagnincl_spec)  :: agnincl_polarinit=0.
   REAL(KIND(1.0)), DIMENSION(nspec,nzinit,ndim_logt,ndim_logg) :: speclibinit=0.
   REAL(SP), DIMENSION(nspec,nzwmb,ndim_wmb_logt,ndim_wmb_logg) :: wmbsi=0.
   REAL(SP), DIMENSION(nzwmb)     :: zwmb=0.
@@ -903,7 +904,7 @@ SUBROUTINE SPS_SETUP(zin)
   READ(99,*) agnincl_values
 
   DO i=1,nagnincl_spec
-     READ(99,*) agnincl_lam(i),agnincl_specinit(i,:)
+     READ(99,*) agnincl_lam(i),agnincl_specinit(i,:),agnincl_polarinit(i)
   ENDDO
 
 
@@ -911,6 +912,12 @@ SUBROUTINE SPS_SETUP(zin)
   i2 = locate(spec_lambda,agnincl_lam(nagnincl_spec))
  
 !  WRITE(6,*) 'locating agnlam',agnincl_lam(1),agnincl_lam(nagnincl_spec),i1,i2
+
+  agnincl_polar(i1:i2) = 10**linterparr(LOG10(agnincl_lam),&
+          LOG10(agnincl_polarinit(:)+tiny30),LOG10(spec_lambda(i1:i2)))-tiny30
+
+
+  !write(6,*)i1,i2,agnincl_polar(i1:i2)
   DO i=1,nagnincl
      agnincl_spec(i1:i2,i) = 10**linterparr(LOG10(agnincl_lam),&
           LOG10(agnincl_specinit(:,i)+tiny30),LOG10(spec_lambda(i1:i2)))-tiny30

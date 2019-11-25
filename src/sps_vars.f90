@@ -79,6 +79,12 @@ MODULE SPS_VARS
   !turn on/off the Jianwei Lyu AGN torus dust inclination model
   INTEGER :: add_agn_incl=1
 
+  !turn on/off the Jianwei Lyu polar dust model
+  INTEGER :: add_agn_polar=1
+
+  !turn on/off the Jianwei Lyu AGN torus dust inclination and polar dust  model
+  INTEGER :: add_agn_incl_polar=1
+
   !turn on/off the AGB circumstellar dust model
   !see Villaume et al. (2014) for details
   INTEGER :: add_agb_dust_model=1
@@ -457,6 +463,7 @@ MODULE SPS_VARS
   !arrays for AGN dust inclination
   REAL(SP), DIMENSION(nagnincl)       :: agnincl_values=0.
   REAL(SP), DIMENSION(nspec,nagnincl) :: agnincl_spec=0.
+  REAL(SP), DIMENSION(nspec) :: agnincl_polar=0.
 
   !arrays for the isochrone data
   REAL(SP), DIMENSION(nz,nt,nm) :: mact_isoc=0.,logl_isoc=0.,&
@@ -493,7 +500,7 @@ MODULE SPS_VARS
           duste_gamma=0.01,duste_umin=1.0,duste_qpah=3.5,fcstar=1.0,&
           masscut=150.0,sigma_smooth=0.,agb_dust=1.0,min_wave_smooth=1E3,&
           max_wave_smooth=1E4,gas_logu=-2.0,gas_logz=0.,igm_factor=1.0,&
-          fagn=0.0,agn_tau=10.0,fagni=0.0,agn_incl=10.0
+          fagn=0.0,agn_tau=10.0,fagni=0.0,agn_incl=10.0,fagnp=0.0
      INTEGER :: zmet=1,sfh=0,wgp1=1,wgp2=1,wgp3=1,evtype=-1
      INTEGER, DIMENSION(nbands) :: mag_compute=1
      INTEGER, DIMENSION(nt) :: ssp_gen_age=1

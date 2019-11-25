@@ -48,7 +48,8 @@ COMMON = sps_vars.o sps_utils.o compsp.o csp_gen.o ssp_gen.o \
 	smoothspec.o mod_gb.o add_nebular.o write_isochrone.o \
 	sfhstat.o linterp.o tsum.o add_agb_dust.o linterparr.o \
 	ztinterp.o vacairconv.o igm_absorb.o get_lumdist.o attn_curve.o \
-	sfh_weight.o sfhlimit.o sfhinfo.o setup_tabular_sfh.o agn_dust.o agn_inclination.o
+	sfh_weight.o sfhlimit.o sfhinfo.o setup_tabular_sfh.o agn_dust.o \
+	agn_inclination.o agn_polar.o agn_inclination_polar.o		
 
 all : $(PROGS)
 

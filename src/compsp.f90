@@ -7,6 +7,7 @@ SUBROUTINE COMPSP(write_compsp, nzin, outfile,&
   use sps_vars
   use sps_utils, only: write_isochrone, add_nebular, setup_tabular_sfh, &
                        csp_gen, sfhinfo, linterp, agn_dust, agn_inclination, &
+                       agn_polar, agn_inclination_polar, &
                        smoothspec, igm_absorb, getindx, getmags
                        
   implicit none
@@ -147,14 +148,24 @@ SUBROUTINE COMPSP(write_compsp, nzin, outfile,&
 
 
      IF (add_agn_dust.EQ.1.AND.pset%fagn.GT.tiny_number) THEN
-        WRITE(6,*)'compsp.f90 add agu dust, fagn', add_agn_dust, pset%agn_tau,pset%fagn
+     !   WRITE(6,*)'compsp.f90 add agu dust, fagn', add_agn_dust, pset%agn_tau,pset%fagn
         spec_csp = agn_dust(spec_lambda, spec_csp, pset, lbol_csp)
      ENDIF
 
 
-     IF (add_agn_incl.EQ.1.AND.pset%fagni.GT.tiny_number) THEN
-        WRITE(6,*)'compsp.f90: add agu dust inclination, fagni', add_agn_incl,pset%agn_incl, pset%fagni
+     IF (add_agn_incl.EQ.1.AND.pset%fagni.GT.tiny_number.AND.pset%fagnp.EQ.0) THEN
+     !   WRITE(6,*)'compsp.f90: add agu dust inclination, fagni', add_agn_incl,pset%agn_incl, pset%fagni
         spec_csp = agn_inclination(spec_lambda, spec_csp, pset, lbol_csp)
+     ENDIF
+
+     IF (add_agn_polar.EQ.1.AND.pset%fagnp.GT.tiny_number.AND.pset%fagni.EQ.0) THEN
+     !   WRITE(6,*)'compsp.f90: add agu polar, fagnp', add_agn_polar, pset%fagnp
+        spec_csp = agn_polar(spec_lambda, spec_csp, pset, lbol_csp)
+     ENDIF
+
+     IF (add_agn_incl_polar.EQ.1.AND.pset%fagni.GT.tiny_number.AND.pset%fagnp.GT.tiny_number) THEN
+     !   WRITE(6,*)'compsp.f90: add agu both, fagni, fagnp', add_agn_incl_polar,pset%agn_incl, pset%fagni,pset%fagnp
+        spec_csp = agn_inclination_polar(spec_lambda, spec_csp, pset, lbol_csp)
      ENDIF
      ! Compute spectral indices
      if (write_compsp.EQ.4) then
